@@ -23,8 +23,6 @@ public class InsertOrganizationUser extends HttpServlet {
     @EJB
     private UserManagementLocal umlEjb;
 
-    @EJB
-    private EventManagementLocal emlEjb;
     /**
      * Processes requests for both HTTP
      * <code>GET</code> and
@@ -67,10 +65,7 @@ public class InsertOrganizationUser extends HttpServlet {
                 password = new String(request.getParameter("user[password]").toString().getBytes("ISO-8859-1"), "UTF-8");
             }
             
-            emlEjb.geoCoding("");
-            OrganizationUser organizationUser = umlEjb.insertOrganizationUser(occupation, phoneNumber, organizationName, organizationNIF, email, password);
-            
-            
+            OrganizationUser organizationUser = umlEjb.insertOrganizationUser(occupation, phoneNumber, organizationName, organizationNIF, email, password);  
             
             if(organizationUser != null){
             request.setAttribute("user", organizationUser);
