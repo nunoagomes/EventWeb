@@ -1,0 +1,73 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 4/jun/2015, 15:27:15
+    Author     : nunoandrebarbosagomes
+*/
+
+.error-messages{
+    margin-top: 50px;
+}
+
+body {
+    margin-top: 50px; /* Required margin for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+}
+
+.section-heading {
+    color: #337ab7;
+    margin-top: 0 !important;
+}
+
+.alerts{
+    margin-top: 50px;
+}
+
+.header-radius {
+    border-radius: 25px;
+    background-color:rgba(0, 0, 0, 0.7);
+    padding: 25px 0px;
+}
+
+.image-bg-fluid-height,
+.image-bg-fixed-height {
+    text-align: center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    background-size: cover;
+    -o-background-size: cover;
+}
+
+.image-bg-fluid-height {
+    background: url(../images/crowddark.jpg) no-repeat center center scroll;
+    padding: 200px 0;
+}
+
+.image-bg-fixed-height {
+	background: url(../images/crowddark.jpg) no-repeat center center scroll;
+    height: 450px;
+}
+
+.img-center {
+	margin: 0 auto;
+}
+
+section {
+    padding: 25px 0;
+}
+
+.section-lead {
+    margin: 30px 0;
+}
+
+.section-paragraph {
+    margin: 30px 0;
+}
+
+footer {
+    margin: 50px 0;
+}
+
+
