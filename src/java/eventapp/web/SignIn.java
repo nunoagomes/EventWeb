@@ -53,9 +53,11 @@ public class SignIn extends HttpServlet {
                 if (user.getClass().equals(RegularUser.class)) {
                     RegularUser reg = (RegularUser) user;
                     session.setAttribute("name", reg.getFirstName());
+                    session.setAttribute("id", reg.getID());
                 } else if(user.getClass().equals(OrganizationUser.class)) {
                     OrganizationUser org = (OrganizationUser) user;
                     session.setAttribute("name", org.getOrganizationName());
+                    session.setAttribute("id", org.getID());
                 }
                 response.sendRedirect("/EventWeb/index.jsp");
             }
