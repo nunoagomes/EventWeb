@@ -17,7 +17,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <p class="navbar-btn">
-                    <a class="btn btn-primary" href="#">
+                    <a class="btn btn-primary" href="LoadEventInfo">
                         <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> New Event
                     </a>
                 </p>
