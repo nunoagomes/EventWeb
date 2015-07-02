@@ -6,9 +6,7 @@
 package eventapp.beans;
 
 import eventapp.EventCategory;
-import eventapp.pojos.GeoCoder;
 import javax.ejb.Stateless;
-import org.orm.PersistentException;
 
 /**
  *

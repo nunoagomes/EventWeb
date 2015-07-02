@@ -4,33 +4,36 @@
  */
 package eventapp.web;
 
-
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import eventapp.EventCategory;
 import eventapp.beans.CategoryManagementLocal;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
 import javax.ejb.EJB;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
  * @author emanuel.braga
  * @author anr
  */
-public class LoadEventInfo extends HttpServlet {
+@WebServlet("/categories")
+public class CategoriesProcessor extends HttpServlet {
 
     @EJB
     private CategoryManagementLocal cmlEjb;
 
     /**
-     * Processes requests for both HTTP
-     * <code>GET</code> and
-     * <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -41,31 +44,34 @@ public class LoadEventInfo extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
+        JsonObject myObj = new JsonObject();
         try {
-            EventCategory[] categories = cmlEjb.listCategories();
-            request.setAttribute("categories", categories);
 
-            RequestDispatcher reqDispatcher = getServletConfig().getServletContext().getRequestDispatcher("/insertEvent.jsp");
-            reqDispatcher.forward(request, response);
+            JSONArray jsonArray = new JSONArray();
+            EventCategory[] categories = cmlEjb.listCategories();
+
+            for (EventCategory p : categories) {
+                JSONObject formDetailsJson = new JSONObject();
+                formDetailsJson.put("id", p.getID());
+                formDetailsJson.put("name", p.getCategoryName());
+                jsonArray.add(formDetailsJson);
+            }
+            JsonElement categoriesJson = new Gson().toJsonTree(jsonArray);
+            myObj.add("categories", categoriesJson);
+            myObj.addProperty("success", true);
+            myObj.addProperty("message", "asdadsa");
+            out.println(myObj.toString());
+            out.close();
         } catch (Exception e) {
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Load Event Info</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet LoadEventInfo at " + request.getContextPath() + "</h1>");
-            out.println("Exception: " + e.getMessage());
-            out.println("</body>");
-            out.println("</html>");
-        } finally {
+            myObj.addProperty("success", false);
+            out.println(myObj.toString());
             out.close();
         }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
-     * Handles the HTTP
-     * <code>GET</code> method.
+     * Handles the HTTP <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
@@ -79,8 +85,7 @@ public class LoadEventInfo extends HttpServlet {
     }
 
     /**
-     * Handles the HTTP
-     * <code>POST</code> method.
+     * Handles the HTTP <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response
