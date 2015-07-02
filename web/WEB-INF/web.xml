@@ -13,16 +13,8 @@
         <servlet-class>eventapp.web.SignIn</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>InsertEvent</servlet-name>
-        <servlet-class>eventapp.web.InsertEvent</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>DestroySession</servlet-name>
         <servlet-class>eventapp.web.DestroySession</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>LoadEventInfo</servlet-name>
-        <servlet-class>eventapp.web.LoadEventInfo</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>InsertOrganizationUser</servlet-name>
@@ -39,14 +31,6 @@
     <servlet-mapping>
         <servlet-name>DestroySession</servlet-name>
         <url-pattern>/DestroySession</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>InsertEvent</servlet-name>
-        <url-pattern>/InsertEvent</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>LoadEventInfo</servlet-name>
-        <url-pattern>/LoadEventInfo</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
