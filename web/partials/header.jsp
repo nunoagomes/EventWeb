@@ -1,5 +1,3 @@
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<!DOCTYPE html>
 <!-- Navigation -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
@@ -17,7 +15,7 @@
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
                 <p class="navbar-btn">
-                    <a class="btn btn-primary" href="#">
+                    <a class="btn btn-primary" href="LoadEventInfo">
                         <span class="glyphicon glyphicon-list-alt" aria-hidden="true"></span> New Event
                     </a>
                 </p>

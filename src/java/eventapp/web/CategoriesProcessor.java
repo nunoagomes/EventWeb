@@ -1,28 +1,35 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package eventapp.web;
 
-import eventapp.OrganizationUser;
-import eventapp.RegularUser;
-import eventapp.beans.UserManagementLocal;
-import eventapp.User;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import eventapp.EventCategory;
+import eventapp.beans.CategoryManagementLocal;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.ejb.EJB;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  *
  * @author emanuel.braga
  * @author anr
  */
-public class SignIn extends HttpServlet {
+@WebServlet("/categories")
+public class CategoriesProcessor extends HttpServlet {
 
     @EJB
-    private UserManagementLocal umlEjb;
+    private CategoryManagementLocal cmlEjb;
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,43 +43,28 @@ public class SignIn extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        HttpSession session = request.getSession();
         PrintWriter out = response.getWriter();
+        JsonObject myObj = new JsonObject();
         try {
-            String email = "";
-            if (request.getParameter("user[email]") != null) {
-                email = new String(request.getParameter("user[email]").toString().getBytes("ISO-8859-1"), "UTF-8");
-            }
-            String password = "";
-            if (request.getParameter("user[password]") != null) {
-                password = new String(request.getParameter("user[password]").toString().getBytes("ISO-8859-1"), "UTF-8");
-            }
-            User user = umlEjb.signIn(email, password);
 
-            if (user != null) {
-                if (user.getClass().equals(RegularUser.class)) {
-                    RegularUser reg = (RegularUser) user;
-                    session.setAttribute("name", reg.getFirstName());
-                    session.setAttribute("id", reg.getID());
-                } else if(user.getClass().equals(OrganizationUser.class)) {
-                    OrganizationUser org = (OrganizationUser) user;
-                    session.setAttribute("name", org.getOrganizationName());
-                    session.setAttribute("id", org.getID());
-                }
-                response.sendRedirect("/EventWeb/index.jsp");
-            }
+            JSONArray jsonArray = new JSONArray();
+            EventCategory[] categories = cmlEjb.listCategories();
 
+            for (EventCategory p : categories) {
+                JSONObject formDetailsJson = new JSONObject();
+                formDetailsJson.put("id", p.getID());
+                formDetailsJson.put("name", p.getCategoryName());
+                jsonArray.add(formDetailsJson);
+            }
+            JsonElement categoriesJson = new Gson().toJsonTree(jsonArray);
+            myObj.add("categories", categoriesJson);
+            myObj.addProperty("success", true);
+            myObj.addProperty("message", "asdadsa");
+            out.println(myObj.toString());
+            out.close();
         } catch (Exception e) {
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Insert Regular User</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet Insert Event at " + request.getContextPath() + "</h1>");
-            out.println("Exception: " + e.getMessage());
-            out.println("</body>");
-            out.println("</html>");
-        } finally {
+            myObj.addProperty("success", false);
+            out.println(myObj.toString());
             out.close();
         }
     }
