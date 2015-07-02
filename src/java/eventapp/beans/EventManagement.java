@@ -10,6 +10,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import eventapp.Attachment;
 import eventapp.DAOFactory;
 import eventapp.Event;
 import eventapp.pojos.GeoCoder;
@@ -20,6 +21,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import javax.ejb.Stateless;
 import org.orm.PersistentException;
 
@@ -35,7 +37,7 @@ public class EventManagement implements EventManagementLocal {
         Gson gson = new Gson();
         GeoCoder location = null;
 
-        URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=AIzaSyDQm3SmzFttml3FCJAsO6nQ7os_q8bdUhA");
+        URL url = new URL("https://maps.googleapis.com/maps/api/geocode/json?address=" + address + "&key=AIzaSyDQm3SmzFttml3FCJAsO6nQ7os_q8bdUhA");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setDoOutput(true);
         connection.setDoInput(true);
@@ -59,25 +61,44 @@ public class EventManagement implements EventManagementLocal {
     }
 
     @Override
-    public Event insertEvent(long organizationUserID, long eventCategoryID,
+    public Event saveEvent(long organizationUserID, long eventCategoryID,
             String title, String date, String description,
             String additionalInformation, String country, String city,
-            String zip, String address, String addressOptional, double price)
-            throws Exception {
+            String zip, String address, String addressOptional, double price,
+            ArrayList<String> imagesPath) throws Exception {
 
         Event event = DAOFactory.getDAOFactory().getEventDAO().createEvent();
         copyToEvent(event, organizationUserID, eventCategoryID, title, date,
                 description, additionalInformation, country, city, zip, address,
                 addressOptional, price);
-        
-        if (eventapp.DAOFactory.getDAOFactory().getEventDAO().save(event)) {
+        if (!imagesPath.isEmpty()) {
+            for (String imagePath : imagesPath) {
+                Attachment attachment = this.insertAttachment(imagePath);
+                if (attachment != null) {
+                    event.photos.add(attachment);
+                }
+            }
+        }
+
+        if (DAOFactory.getDAOFactory().getEventDAO().save(event)) {
             return event;
         } else {
             return null;
         } //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void copyToEvent(eventapp.Event _event,
+    @Override
+    public Event getEvent(long eventID) throws Exception {
+        return DAOFactory.getDAOFactory().getEventDAO().loadEventByORMID((int) eventID);
+    }
+
+    @Override
+    public boolean deleteEvent(long eventID) throws Exception {
+        Event _event = DAOFactory.getDAOFactory().getEventDAO().loadEventByORMID((int) eventID);
+        return _event != null && DAOFactory.getDAOFactory().getEventDAO().deleteAndDissociate(_event);
+    }
+
+    private void copyToEvent(Event _event,
             long organizationUserID, long eventCategoryID, String title,
             String date, String description, String additionalInformation,
             String country, String city, String zip, String address,
@@ -95,15 +116,27 @@ public class EventManagement implements EventManagementLocal {
         _event.setPrice(price);
 
         try {
-            eventapp.EventCategory _eventCategory = eventapp.DAOFactory.getDAOFactory().getEventCategoryDAO().loadEventCategoryByORMID((int) eventCategoryID);
+            eventapp.EventCategory _eventCategory = DAOFactory.getDAOFactory().getEventCategoryDAO().loadEventCategoryByORMID((int) eventCategoryID);
             _event.setEventCategory(_eventCategory);
         } catch (PersistentException e) {
         }
 
         try {
-            eventapp.OrganizationUser _organizationUser = eventapp.DAOFactory.getDAOFactory().getOrganizationUserDAO().loadOrganizationUserByORMID((int) organizationUserID);
+            eventapp.OrganizationUser _organizationUser = DAOFactory.getDAOFactory().getOrganizationUserDAO().loadOrganizationUserByORMID((int) organizationUserID);
             _event.setOrganizationUser(_organizationUser);
         } catch (PersistentException e) {
         }
+
+    }
+
+    @Override
+    public Attachment insertAttachment(String fileName) throws Exception {
+        Attachment attachment = DAOFactory.getDAOFactory().getAttachmentDAO().createAttachment();
+        copyToAttachement(attachment, fileName);
+        return attachment;
+    }
+
+    private void copyToAttachement(Attachment _attachment, String fileName) {
+        _attachment.setFilename(fileName);
     }
 }
